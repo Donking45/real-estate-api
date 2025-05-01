@@ -2,6 +2,7 @@
 This is a simple RESTful API built with Express.js that allows you to manage and query a list of pharmaceutical drugs. It supports operations such as retrieving drugs by category, listing prescription-only medications, checking low-stock items, and more.
 
 **Features**
+
 Get all antibiotics
 Get all drug names in lowercase
 Filter drugs by category
@@ -14,6 +15,7 @@ Count all analgesics
 
 
 **Endpoints**
+
 GET /drugs/antibiotics
 Returns all drugs where the category is "Antibiotic".
 
