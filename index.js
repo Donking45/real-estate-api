@@ -38,11 +38,11 @@ app.post("/add-foundItem", async(req, res) =>{
 
 // View all unclaimed items
 app.get("/all-unclaimedItems", async (req, res) => {
-    const allItems = await Item.find()
+    const allUnclaimedItems = await Item.find()
   
     res.status(200).json({
       message: "Successful",
-      allItems
+      allUnclaimedItems
     })  
 })
 
