@@ -13,8 +13,14 @@ const propertySchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String, // URL to image, or make it [String] if multiple
-    required: true,
+   public_id: {
+       type: String,
+       required: true
+   },
+   url: {
+    type: String,
+    required: true
+   }
   },
   agentId: {
     type: mongoose.Schema.Types.ObjectId,
