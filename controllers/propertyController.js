@@ -2,6 +2,9 @@ const Property = require('../models/propertyModel')
 const SavedProperty = require('../models/savedPropertyModel')
 const cloudinary = require('../utils/cloudinary')
 
+
+
+
 const createProperty = async (req, res) => {
 
   const { title, description, price, location, image } = req.body;
@@ -60,6 +63,7 @@ const createProperty = async (req, res) => {
 const getAllProperties = async (req, res) => {
     try {
       const { location, keyword, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
+
       const filter = {};
   
   

@@ -11,14 +11,14 @@ const  { authMiddleware }  = require("../middleware/authMiddleware");
 const upload = require('../middleware/multer')
 
 // Property routes
-router.post("/agent", authMiddleware, upload.single('image'), createProperty); // Protected: agent only
-router.get("/", getAllProperties); // Public
-router.get("/:id", getPropertyById); // Public
+router.post("/properties", authMiddleware, upload.single('image'), createProperty); // Protected: agent only
+router.get("/properties", getAllProperties); // Public
+router.get("/properties/:id", getPropertyById); // Public
 
 
 // Saved property routes
 router.post("/saved", authMiddleware, saveProperty); // Protected
-router.get("/saved/all", authMiddleware, getSavedProperties); // Protected
+router.get("/saved", authMiddleware, getSavedProperties); // Protected
 
 
 module.exports = router;
