@@ -1,7 +1,6 @@
 const express = require('express')
-const authRoute = require('./routes/authRoute')
 const connectDB = require('./db')
-const propertyRoute = require("./routes/propertyRoute")
+const routes = require('./routes')
 require('dotenv').config();
 const cors = require('cors')
 const app = express()
@@ -16,10 +15,8 @@ connectDB();
 
 app.use('/uploads', express.static('uplaods'));
 
-
-app.use(propertyRoute);
-
-app.use(authRoute)
+// Routes
+app.use('/api', routes);
 
 
 

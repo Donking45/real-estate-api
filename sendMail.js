@@ -7,21 +7,39 @@ const sendForgotPasswordEmail = async (email, token) =>{
             auth: {
                 user: `${process.env.EMAIL}`,
                 pass: `${process.env.EMAIL_PASSWORD}`
+            },
+            tls: {
+                rejectUnauthorized: false,
             }
-        })
+        });
     
         const mailDetails = {
             from: `${process.env.EMAIL}`,
             to: `${email}`,
             subject: "Reset Password Notification",
-            html: `<h1>Here is the token to reset your password please click on the button, 
-            <a class"" href='https://www.homedreams.com/reset-password/${token}'> Reset Password </a>
+            html: `<h2>Password Reset Request</h2><p>You recently requested to reset your password. Please click the button below to proceed:</p>
 
-            if the button does not workfor any reason, please click the link below
-            <a href='href='https://www.homedreams.com/reset-password/${token}'> Reset Password </a>
+<p><a href="https://www.yourcareerex.com/reset-password/${token}" 
+    style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 5px;">
+    Reset Password
+  </a>
+</p>
 
-            ${token}
-            </h1>`
+
+<p>If the button above doesn't work, copy and paste the link below into your browser:</p>
+
+<p>
+  <a href="https://www.yourcareerex.com/reset-password/${token}">
+    https://www.yourcareerex.com/reset-password/${token}
+  </a>
+</p>
+
+
+<p>If you did not request this change, please ignore this message.</p>
+
+
+<p>– CareerEX Support</p>
+`
         }
     
         await mailTransport.sendMail(mailDetails)

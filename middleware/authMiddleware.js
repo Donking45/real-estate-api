@@ -1,14 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require("../models/userModel")
-const mongoose = require('mongoose');
 
 
 
-/*
+
+
 const validateRegister = (req, res, next)=>{
 
 
-    const { email, password, firstName, lastName, state } = req.body
+    const { email, password, firstName, lastName, role } = req.body
 
 
     const errors = []
@@ -32,10 +32,10 @@ const validateRegister = (req, res, next)=>{
     next()
 
 
-}*/
+}
 
 
-const authMiddleware = async (req, res, next)=>{
+const authorization = async (req, res, next)=>{
 
     const token = req.header("Authorization")
 
@@ -70,4 +70,4 @@ const authMiddleware = async (req, res, next)=>{
 }
 
 
-module.exports = { authMiddleware };
+module.exports = { validateRegister, authorization};

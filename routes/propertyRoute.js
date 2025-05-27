@@ -7,18 +7,18 @@ const {
   saveProperty,
   getSavedProperties,
 } = require("../controllers/propertyController");
-const  { authMiddleware }  = require("../middleware/authMiddleware");
+const  { authorization }  = require("../middleware/authMiddleware");
 const upload = require('../middleware/multer')
 
 // Property routes
-router.post("/properties", authMiddleware, upload.single('image'), createProperty); // Protected: agent only
+router.post("/properties", authorization, upload.single('image'), createProperty); // Protected: agent only
 router.get("/properties", getAllProperties); // Public
 router.get("/properties/:id", getPropertyById); // Public
 
 
 // Saved property routes
-router.post("/saved", authMiddleware, saveProperty); // Protected
-router.get("/saved", authMiddleware, getSavedProperties); // Protected
+router.post("/saved", authorization, saveProperty); // Protected
+router.get("/saved", authorization, getSavedProperties); // Protected
 
 
 module.exports = router;

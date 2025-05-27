@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { sendForgotPasswordEmail, validEmail } = require('../sendMail')
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
@@ -9,6 +10,12 @@ const register = async (req, res) => {
       if (!email){
         return res.status(400).json({
           message: "Please add your email"
+        })
+      }
+
+      if (!validEmail(email)){
+        return res.status(400).json({
+          message: "Incorrect email format"
         })
       }
     
@@ -100,7 +107,7 @@ const login =  async (req, res) => {
           name: user?.name,
           password: user?.password,
           phoneNumber: user?.phoneNumber,
-          role: user.role
+          role: user?.role
         }
     })
 }
@@ -121,7 +128,7 @@ const forgotPassword = async (req, res) => {
       const accessToken = await jwt.sign(
         {user},
         `${process.env.ACCESS_TOKEN}`,
-        { expiresIn: "5h"}
+        { expiresIn: "5m"}
       )
     
     await sendForgotPasswordEmail(email, accessToken)
@@ -131,9 +138,9 @@ const forgotPassword = async (req, res) => {
     
 const resetPassword =  async (req,res) =>{
     
-    const {email, password } = req.body
+    const {password } = req.body
     
-    const user = await User.findOne ( { email })
+    const user = await User.findOne ( { email:req.user.email })
     
     if(!user){
         return res.status(404).json({ message: "User account not found!"})
