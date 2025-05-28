@@ -1,10 +1,12 @@
 const authRoute = require('./authRoute')
 const propertyRoute = require('./propertyRoute')
+const savedPropertyRoute = require('./savedPropertyRoute')
 
 
 const routes = [
     authRoute,
-    propertyRoute
+    propertyRoute,
+    savedPropertyRoute
 ]
 
 module.exports = routes

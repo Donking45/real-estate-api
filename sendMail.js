@@ -29,7 +29,7 @@ const sendForgotPasswordEmail = async (email, token) =>{
 <p>If the button above doesn't work, copy and paste the link below into your browser:</p>
 
 <p>
-  <a href="https://www.yourcareerex.com/reset-password/${token}">
+  <a href='https://www.yourcareerex.com/reset-password/${token}'>
     https://www.yourcareerex.com/reset-password/${token}
   </a>
 </p>
