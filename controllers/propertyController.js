@@ -148,10 +148,12 @@ const saveProperty = async(req, res) => {
       res.status(201).json({
          message: 'Property saved',
           saved });
-    } catch (err) {
+    } catch (error) {
+      console.error("Save Property Error", error)
+      return
       res.status(500).json({ 
         message: 'Failed to save property',
-         error: err.message 
+         error: error.message 
         });
     } 
 }
