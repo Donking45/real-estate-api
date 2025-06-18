@@ -9,7 +9,7 @@ router.post('/auth/login', login);
 router.post('/auth/verify-email', verifyEmail)
 router.post('/auth/forgot-password', forgotPassword);
 router.post('/auth/verify-otp', verifyOTP)
-router.patch('/auth/reset-password', authorization, resetPassword);
+router.patch('/auth/reset-password', resetPassword);
 
 
 module.exports = router;
