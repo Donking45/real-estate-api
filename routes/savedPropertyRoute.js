@@ -7,7 +7,7 @@ const  { authorization }  = require("../middleware/authMiddleware");
 
 
 // Saved property routes
-router.post("/properties/saved", authorization, saveProperty); // Protected
+router.post("/saved", authorization, saveProperty); // Protected
 router.get("/saved", authorization, getSavedProperties); // Protected
 
 
