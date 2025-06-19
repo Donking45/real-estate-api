@@ -8,7 +8,7 @@ const  { authorization }  = require("../middleware/authMiddleware");
 
 // Saved property routes
 router.post("/properties/saved", authorization, saveProperty); // Protected
-router.get("/properties/saved/all", authorization, getSavedProperties); // Protected
+router.get("/saved", authorization, getSavedProperties); // Protected
 
 
 module.exports = router;
