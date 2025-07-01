@@ -5,6 +5,12 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true},
   password: { type: String, required: true},
+  passKey: { 
+    id: String,
+    publicKey: String,
+    counter: Number,
+    transports: [String]
+  },
   role: { type: String, enum: ['agent', 'user'], required: true},
   phoneNumber: { type: String },
   otp: { type: String },

@@ -2,8 +2,49 @@ const bcrypt = require('bcryptjs');
 const { sendEmail, validEmail } = require('../sendMail')
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const { startRegistration } = require('@simplewebauthn/browser');
+const { generateRegistrationOptions } = require('@simplewebauthn/server');
+const  {USERS,connectDB,getUserByEmail,getUserById,createUser,updateUserCounter} = require("../db")
+const RP_ID = "localhost"
 
-const register = async (req, res) => {
+
+
+const bioRegistration= async (req, res) => {
+  try {
+    const email = req.query.email;
+
+
+    if (!email) {
+      return res.status(400).json({ message: "Please add your email" });
+    }
+
+
+    const existingUser = getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: "User account already exists" });
+    }
+
+
+    const options = await generateRegistrationOptions({
+      rpID: RP_ID,
+      rpName: "Real Estate API",
+      userName: email,
+    });
+
+
+    res.cookie("regInfo", JSON.stringify({
+      email,
+      challenge: options.challenge,
+    }), { httpOnly: true, maxAge: 60000, secure: true });
+
+
+    res.json(options);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const authRegistration = async (req, res) => {
   try {
     const { name, email, password, phoneNumber, role } = req.body
   
@@ -64,7 +105,94 @@ const register = async (req, res) => {
   }
 }
 
-const login =  async (req, res) => {
+const verifyBioRegister =  async (req, res) => {
+  try {
+    const regInfo = JSON.parse(req.cookies.regInfo)
+
+    if(!regInfo) {
+      return res.status(400).json({
+        error: "Registration info not found"
+      })
+    }
+
+    const verification = await verifyRegistrationResponse({
+      response: req.body,
+      expectedChallenge: regInfo.challenge,
+      expectedOrigin: CLIENT_URL,
+      expectedRPID: RP_ID
+    })
+
+    if (verification.verified) {
+      await createUser(regInfo.userId, regInfo.email, {
+        id: verification.registrationInfo.credentialID,
+        publicKey: verification.registrationInfo.credentialPublicKey,
+        counter: verification.registrationInfo.counter,
+        deviceType: verification.registrationInfo.credentialDeviceType,
+        backedUp: verification.registrationInfo.credentialBackedUp,
+        transport: req.body.transports
+      })
+
+    
+      res.clearCookie("regInfo")
+      return res.json({
+        verified: true
+      })
+    } else {
+      return res.status(400).json({
+        verified: false,
+        error: "verification failed"
+      })
+    } 
+  } catch (error) {
+    res.status(500).json({
+      message: error.message
+    })
+  }
+}
+
+const loginWithBio = async (req, res) => {
+  try {
+    const email = req.query.email;
+
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+
+    const user = getUserByEmail(email);
+    if (!user) {
+      return res.status(400).json({ error: "No user for this email" });
+    }
+
+
+    const options = await generateAuthenticationOptions({
+      rpID: RP_ID,
+      allowCredentials: [
+        {
+          id: user.passKey.id,
+          type: "public-key",
+          transports: user.passKey.transports,
+        },
+      ],
+    });
+
+
+    res.cookie("authInfo", JSON.stringify({
+      userId: user.id,
+      challenge: options.challenge,
+    }), { httpOnly: true, maxAge: 60000, secure: true });
+
+
+    res.json(options);
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Login not successful" });
+  }
+};
+
+
+const loginWithAuth =  async (req, res) => {
   try{
     const { email, password } = req.body
      
@@ -152,6 +280,50 @@ const login =  async (req, res) => {
 };
 
 
+
+        
+        const verifyAuth = async (req, res) => {
+          try {
+            const authInfo = JSON.parse(req.cookies.authInfo);
+        
+        
+            if (!authInfo) {
+              return res.status(400).json({ error: "Authentication info not found" });
+            }
+        
+        
+            const user = getUserById(authInfo.userId);
+            if (!user) {
+              return res.status(404).json({ error: "User not found" });
+            }
+        
+        
+            const verification = await verifyAuthenticationResponse({
+              response: req.body,
+              expectedChallenge: authInfo.challenge,
+              expectedOrigin: CLIENT_URL,
+              expectedRPID: RP_ID,
+              authenticator: {
+                credentialID: user.passKey.id,
+                credentialPublicKey: user.passKey.publicKey,
+                counter: user.passKey.counter,
+                transports: user.passKey.transports,
+              },
+            });
+        
+        
+            if (verification.verified) {
+              updateUserCounter(authInfo.userId, verification.authenticationInfo.newCounter);
+              res.clearCookie("authInfo");
+              return res.json({ verified: true });
+            } else {
+              return res.status(400).json({ verified: false, error: "Verification failed" });
+            }
+          } catch (error) {
+            res.status(500).json({ message: error.message });
+          }
+        };
+        
 
 const forgotPassword = async (req, res, next) => {
 
@@ -346,8 +518,12 @@ const resetPassword = async (req, res, next) => {
   
 
 module.exports = {
-  register,
-  login,
+  bioRegistration,
+  authRegistration,
+  verifyBioRegister,
+  loginWithBio,
+  loginWithAuth,
+  verifyAuth,
   forgotPassword,
   verifyEmail,
   verifyOTP,

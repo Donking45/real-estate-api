@@ -2,6 +2,27 @@ require('dotenv').config(); // Ensure dotenv is loaded
 const mongoose = require('mongoose');
 
 
+const USERS = []
+
+function getUserByEmail(email) {
+    return USERS.find(user => user.email === email)
+}
+
+function getUserById(id) {
+    return USERS.find(user => user.id === id)
+}
+
+function createUser(id, email, passkey) {
+     USERS.push({ id, email, passkey })
+}
+
+function updateUserCounter(id, counter) {
+    const user = USERS.find(user => user.id === id)
+    user.passkey.counter = counter
+}
+
+
+
 const connectDB = async () => {
     try {
         const mongoURI = process.env.MONGO_URI; // Ensure it's fetched correctly
@@ -22,4 +43,11 @@ const connectDB = async () => {
 };
 
 
-module.exports = connectDB;
+module.exports = {
+    connectDB,
+    USERS,
+    getUserByEmail,
+    getUserById,
+    createUser,
+    updateUserCounter
+};

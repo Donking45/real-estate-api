@@ -8,9 +8,20 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  location: {
+  address:{
     type: String,
-    required: true,
+    required: [true, 'Please add an address']
+  },
+  location:{ 
+    type:{
+      type: String,
+      enum: ['Point'],
+    },
+    coordinates: {
+       type: [Number],
+       index: '2dsphere',
+    },
+    formattedAddress: String,
   },
   image: {
    public_id: {

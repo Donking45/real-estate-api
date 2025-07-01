@@ -1,5 +1,5 @@
 const express = require('express')
-const connectDB = require('./db')
+const  {USERS,connectDB,getUserByEmail,getUserById,createUser,updateUserCounter} = require("./db")
 const routes = require('./routes')
 require('dotenv').config();
 const cors = require('cors')
@@ -13,11 +13,10 @@ app.use(express.urlencoded({ extended: true }))
 // Connect to MongoDB
 connectDB();
 
-app.use('/uploads', express.static('uplaods'));
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api', routes);
-
 
 
 app.listen(PORT, () => {
